@@ -1,6 +1,12 @@
 /**
  * Life Savor Config Page Template SDK
  *
+ * @deprecated This module uses iframe + WebSocket communication and is
+ * superseded by the API-routed setup wizard. Use `skill-config-sdk.js`
+ * instead, which provides `createConfigSchema`, `createSetupStep`,
+ * `validateConfigValues`, and validation command helpers without any
+ * WebSocket or iframe dependency. See the migration guide in README.md.
+ *
  * Lightweight JavaScript SDK for config page templates that run inside
  * sandboxed iframes on the marketplace CDN. Communicates with the agent
  * bridge via WebSocket through the connect service.

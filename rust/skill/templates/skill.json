@@ -1,0 +1,83 @@
+{
+  "skill_id": "weather-alerts",
+  "name": "Weather Alerts",
+  "version": "1.2.0",
+  "description": "Real-time weather alerts for your location",
+  "execution_tier": 1,
+  "entrypoint": {
+    "type": "node",
+    "command": "node",
+    "args": ["index.js"]
+  },
+
+  "config_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "api_key": {
+        "type": "string",
+        "title": "API Key",
+        "description": "Your OpenWeatherMap API key",
+        "x-secret": true
+      },
+      "location": {
+        "type": "string",
+        "title": "Default Location",
+        "description": "City name or coordinates for weather alerts"
+      },
+      "units": {
+        "type": "string",
+        "title": "Temperature Units",
+        "description": "Preferred temperature unit system",
+        "enum": ["metric", "imperial"],
+        "default": "metric"
+      },
+      "alert_types": {
+        "type": "array",
+        "title": "Alert Types",
+        "description": "Types of weather alerts to receive",
+        "items": { "type": "string" },
+        "default": ["severe", "warning"]
+      },
+      "polling_interval": {
+        "type": "integer",
+        "title": "Polling Interval",
+        "description": "How often to check for new alerts (in minutes)",
+        "default": 15
+      },
+      "notifications_enabled": {
+        "type": "boolean",
+        "title": "Enable Notifications",
+        "description": "Whether to send push notifications for new alerts",
+        "default": true
+      }
+    },
+    "required": ["api_key", "location"]
+  },
+
+  "setup_steps": [
+    {
+      "step_id": "credentials",
+      "title": "API Credentials",
+      "description": "Enter your OpenWeatherMap API key to connect the weather service",
+      "fields": ["api_key"],
+      "validation_command": "validate_api_key"
+    },
+    {
+      "step_id": "preferences",
+      "title": "Alert Preferences",
+      "description": "Configure your location and alert preferences",
+      "fields": ["location", "units", "alert_types", "polling_interval", "notifications_enabled"]
+    }
+  ],
+
+  "documentation": {
+    "usage_guide": "docs/USAGE.md",
+    "examples": [
+      {
+        "title": "Setting Up Multiple Locations",
+        "file": "docs/examples/multi-location.md"
+      }
+    ]
+  }
+}

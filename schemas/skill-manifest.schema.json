@@ -1,0 +1,320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://developer.lifesavor.ai/schemas/skill-manifest.schema.json",
+  "title": "SkillManifest",
+  "description": "Schema for a Life Savor skill manifest (skill.json). Defines the skill identity, entrypoint, capabilities, dependencies, configuration schema, setup workflow, and documentation references.",
+  "type": "object",
+  "required": [
+    "skill_id",
+    "name",
+    "version",
+    "description",
+    "execution_tier"
+  ],
+  "properties": {
+    "skill_id": {
+      "type": "string",
+      "description": "Unique identifier for the skill. Must be lowercase alphanumeric with hyphens.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name for the skill."
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version string (e.g. 1.2.0).",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of what the skill does.",
+      "minLength": 10
+    },
+    "author": {
+      "type": "string",
+      "description": "Author or organization name."
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX license identifier (e.g. MIT, Apache-2.0)."
+    },
+    "tags": {
+      "type": "array",
+      "description": "Searchable tags for marketplace discovery.",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "execution_tier": {
+      "type": "integer",
+      "description": "Execution tier controlling resource limits and sandbox privileges. Valid values: 1, 2, or 3.",
+      "enum": [
+        1,
+        2,
+        3
+      ]
+    },
+    "entrypoint": {
+      "type": "object",
+      "description": "How to launch the skill process.",
+      "required": [
+        "type",
+        "command"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Runtime type for the entrypoint.",
+          "enum": [
+            "node",
+            "python",
+            "binary",
+            "wasm"
+          ]
+        },
+        "command": {
+          "type": "string",
+          "description": "Command to execute."
+        },
+        "args": {
+          "type": "array",
+          "description": "Arguments passed to the command.",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "env": {
+          "type": "object",
+          "description": "Environment variables to set for the process.",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {}
+        }
+      },
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "object",
+      "description": "Optional capability flags for the skill.",
+      "properties": {
+        "rag_provider": {
+          "type": "boolean",
+          "description": "Whether this skill provides RAG (retrieval-augmented generation) content.",
+          "default": false
+        }
+      },
+      "additionalProperties": false,
+      "default": {}
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "Other skills this skill depends on.",
+      "items": {
+        "type": "object",
+        "required": [
+          "skill_id"
+        ],
+        "properties": {
+          "skill_id": {
+            "type": "string",
+            "description": "Identifier of the required skill."
+          },
+          "min_version": {
+            "type": "string",
+            "description": "Minimum required version (semver).",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "default": []
+    },
+    "config_schema": {
+      "$ref": "#/$defs/ConfigSchema"
+    },
+    "setup_steps": {
+      "type": "array",
+      "description": "Ordered list of setup steps that guide the user through configuring the skill. Requires config_schema to be defined.",
+      "items": {
+        "$ref": "#/$defs/SetupStep"
+      }
+    },
+    "documentation": {
+      "$ref": "#/$defs/SkillDocumentation"
+    }
+  },
+  "additionalProperties": false,
+  "dependentRequired": {
+    "setup_steps": [
+      "config_schema"
+    ]
+  },
+  "$defs": {
+    "ConfigSchema": {
+      "type": "object",
+      "description": "JSON Schema-based configuration schema for a skill. Defines the typed fields a skill accepts as configuration (API keys, webhook URLs, toggle flags, etc.).",
+      "required": [
+        "type",
+        "properties"
+      ],
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "description": "JSON Schema draft identifier.",
+          "const": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "type": {
+          "type": "string",
+          "description": "Must be object.",
+          "const": "object"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Map of field name to field definition. Each property defines a configurable parameter for the skill.",
+          "additionalProperties": {
+            "$ref": "#/$defs/ConfigFieldDefinition"
+          }
+        },
+        "required": {
+          "type": "array",
+          "description": "List of required field names.",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "additionalProperties": false
+    },
+    "ConfigFieldDefinition": {
+      "type": "object",
+      "description": "Definition of a single configurable field within the config_schema.",
+      "required": [
+        "type",
+        "title",
+        "description"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "JSON Schema type of the field.",
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "integer",
+            "array"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable label for UI display."
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text describing the fields purpose."
+        },
+        "default": {
+          "description": "Default value for the field. Type should match the field type."
+        },
+        "x-secret": {
+          "type": "boolean",
+          "description": "When true, indicates this field holds a secret value (API key, token, etc.) that must be stored securely and masked in UI display.",
+          "default": false
+        },
+        "items": {
+          "$ref": "#/$defs/ConfigFieldDefinition",
+          "description": "For array fields: schema of array items."
+        },
+        "enum": {
+          "type": "array",
+          "description": "Allowed values for the field.",
+          "items": {}
+        }
+      },
+      "additionalProperties": false
+    },
+    "SetupStep": {
+      "type": "object",
+      "description": "A single step in a multi-step setup workflow. Groups related config fields into a guided experience with optional per-step validation.",
+      "required": [
+        "step_id",
+        "title",
+        "description",
+        "fields"
+      ],
+      "properties": {
+        "step_id": {
+          "type": "string",
+          "description": "Unique identifier within the skill (e.g. credentials, preferences)."
+        },
+        "title": {
+          "type": "string",
+          "description": "Display title for the step.",
+          "minLength": 3,
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "description": "Description text explaining what this step configures.",
+          "minLength": 10,
+          "maxLength": 500
+        },
+        "fields": {
+          "type": "array",
+          "description": "Config field names from config_schema that belong to this step.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validation_command": {
+          "type": "string",
+          "description": "Optional skill operation name that the agent invokes to validate the step field values before advancing."
+        }
+      },
+      "additionalProperties": false
+    },
+    "SkillDocumentation": {
+      "type": "object",
+      "description": "Documentation references bundled with a skill. Used by both human readers and the agent LLM for knowledge retrieval.",
+      "properties": {
+        "usage_guide": {
+          "type": "string",
+          "description": "Relative path to the main usage guide Markdown file within the skill directory."
+        },
+        "examples": {
+          "type": "array",
+          "description": "Additional example documentation files.",
+          "items": {
+            "$ref": "#/$defs/DocumentationExample"
+          },
+          "default": []
+        }
+      },
+      "additionalProperties": false
+    },
+    "DocumentationExample": {
+      "type": "object",
+      "description": "A single documentation example reference.",
+      "required": [
+        "title",
+        "file"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Display title for the example."
+        },
+        "file": {
+          "type": "string",
+          "description": "Relative path to the Markdown file."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

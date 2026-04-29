@@ -74,6 +74,8 @@ pub mod security_surface;
 pub mod build_config;
 pub mod component_manifest;
 pub mod sandbox_compliance;
+pub mod config_builder;
+pub mod validation_handler;
 
 #[cfg(feature = "analytics")]
 pub mod analytics;
@@ -169,6 +171,24 @@ pub use lifesavor_agent_types::credential::{
     CredentialResolver,
     ResolvedCredential,
     CredentialError,
+};
+
+// ---------------------------------------------------------------------------
+// Re-exports: Skill config types from lifesavor-agent-types
+// ---------------------------------------------------------------------------
+
+/// Configuration schema, setup workflow, and documentation types for skills.
+pub use lifesavor_agent_types::skill_config::{
+    ConfigSchema,
+    ConfigFieldDefinition,
+    SetupStep,
+    SetupStatus,
+    SkillDocumentation,
+    DocumentationExample,
+    ValidationRequest,
+    ValidationResponse,
+    ValidationContext,
+    SetupComplexity,
 };
 
 /// Concrete credential manager (requires `agent-runtime` feature).

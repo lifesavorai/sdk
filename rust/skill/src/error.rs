@@ -29,6 +29,10 @@ pub enum SkillSdkError {
     #[error("Tool schema invalid: {0}")]
     ToolSchemaInvalid(String),
 
+    /// Configuration schema or setup workflow builder error.
+    #[error("Config builder error: {0}")]
+    ConfigBuilder(String),
+
     /// Manifest validation failed.
     #[error("Manifest validation failed: {0}")]
     ManifestValidation(#[from] ManifestValidationError),
@@ -62,6 +66,7 @@ impl SkillSdkError {
             Self::PermissionDenied(_) => "PERMISSION_DENIED",
             Self::SandboxViolation(_) => "SANDBOX_VIOLATION",
             Self::ToolSchemaInvalid(_) => "TOOL_SCHEMA_INVALID",
+            Self::ConfigBuilder(_) => "CONFIG_BUILDER_ERROR",
             Self::ManifestValidation(_) => "MANIFEST_VALIDATION_FAILED",
             Self::Io(_) => "IO_ERROR",
             Self::Json(_) => "JSON_ERROR",
