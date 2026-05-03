@@ -4,7 +4,7 @@ The Life Savor Developer SDK provides tools and libraries for building component
 
 ## Quick Links
 
-- [Getting Started](./GETTING_STARTED.md) — Set up your development environment
+- [Getting Started](./GETTING_STARTED.md) — Create, configure, and publish your first component
 - [Architecture](./ARCHITECTURE.md) — Platform architecture overview
 - [Build Configuration](./BUILD_CONFIG.md) — `lifesavor-build.yml` reference
 - [Deploy Keys](./DEPLOY_KEYS.md) — SSH deploy key setup for system components
@@ -17,14 +17,15 @@ The Life Savor Developer SDK provides tools and libraries for building component
 ### CLI Tool
 
 ```bash
-# macOS
+# macOS / Linux
 brew install lifesavor/tap/lsai-cli
 
-# Linux (Debian/Ubuntu)
-curl -fsSL https://developer.lifesavor.ai/install.sh | sh
-
 # From source
-cargo install --git https://github.com/lifesavorai/lsai-cli.git
+cd developer/cli && cargo install --path .
+
+# First-time setup
+lsai-cli setup
+lsai-cli whoami
 ```
 
 ### Rust SDK
@@ -32,30 +33,61 @@ cargo install --git https://github.com/lifesavorai/lsai-cli.git
 ```toml
 [dependencies]
 # For system components:
-lifesavor-system-sdk = { git = "https://github.com/lifesavorai/sdk.git" }
+lifesavor-system-sdk = "0.5.0"
 
-# The SDK re-exports all shared types from lifesavor-agent-types.
-# No need to depend on the agent crate directly.
+# For model components:
+lifesavor-model-sdk = "0.5.0"
 ```
+
+## Quick Start
+
+```bash
+# 1. Create a component
+lsai-cli components create --name my-skill --type skill --language rust
+
+# 2. Set required metadata (description, category, tags)
+lsai-cli components update <id> \
+  --description "My awesome skill" \
+  --category General \
+  --tags automation,utility
+
+# 3. Connect your repo
+lsai-cli components connect --component <id> --repo-url https://github.com/you/my-skill
+
+# 4. Submit for review
+lsai-cli components submit <id>
+
+# 5. Build
+lsai-cli builds submit --component <id> --all-platforms
+
+# 6. Publish (after QA approval)
+lsai-cli components publish --component <id> --version 1.0.0 --notes CHANGELOG.md
+```
+
+See [Getting Started](./GETTING_STARTED.md) for the full walkthrough.
+
+## Component Types
+
+| Type      | Description                      | Language |
+| --------- | -------------------------------- | -------- |
+| Model     | AI/ML models for inference       | Rust     |
+| Assistant | Conversational AI assistants     | Python   |
+| Skill     | Reusable capabilities and tools  | Any      |
+| System    | Platform-level system components | Rust     |
+| Agent     | Autonomous agent configurations  | Any      |
 
 ## Authentication
 
 ```bash
-lsai-cli auth login    # Opens browser for OAuth
-lsai-cli auth status   # Check current auth state
+lsai-cli setup         # First-time setup with API key
+lsai-cli whoami         # Verify identity
+lsai-cli auth status    # Check auth state
 ```
 
-## Component Types
-
-| Type      | Description                      |
-| --------- | -------------------------------- |
-| Model     | AI/ML models for inference       |
-| Assistant | Conversational AI assistants     |
-| Skill     | Reusable capabilities and tools  |
-| System    | Platform-level system components |
+API keys use the `lsk_` prefix and are managed at [developer.lifesavor.ai/api-keys](https://developer.lifesavor.ai/api-keys).
 
 ## Support
 
 - [Developer Portal](https://developer.lifesavor.ai)
-- [API Reference](https://developer.lifesavor.ai/documentation)
+- [SDK Documentation](https://developer.lifesavor.ai/documentation)
 - [Support Cases](https://developer.lifesavor.ai/support)
