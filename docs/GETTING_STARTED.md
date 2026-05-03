@@ -13,10 +13,19 @@ Visit [developer.lifesavor.ai](https://developer.lifesavor.ai) and sign up with 
 ## 2. Install and Configure the CLI
 
 ```bash
-# macOS
-brew install lifesavor/tap/lsai-cli
+# macOS (Homebrew)
+curl -fsSL https://download.lifesavor.ai/lsai-cli/latest/homebrew/install.sh | bash
 
-# From source
+# Debian / Ubuntu (APT)
+curl -fsSL https://download.lifesavor.ai/lsai-cli/apt/setup.sh | sudo bash
+
+# Fedora / RHEL / Amazon Linux (DNF/YUM)
+curl -fsSL https://download.lifesavor.ai/lsai-cli/yum/setup.sh | sudo bash
+
+# Windows (winget)
+winget install LifeSavorAI.lsai-cli
+
+# From source (any platform with Rust)
 cd developer/cli && cargo install --path .
 
 # First-time setup — paste your API key (lsk_ prefix) from the portal

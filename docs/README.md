@@ -17,16 +17,23 @@ The Life Savor Developer SDK provides tools and libraries for building component
 ### CLI Tool
 
 ```bash
-# macOS / Linux
-brew install lifesavor/tap/lsai-cli
+# macOS (Homebrew)
+curl -fsSL https://download.lifesavor.ai/lsai-cli/latest/homebrew/install.sh | bash
 
-# From source
+# Debian / Ubuntu (APT)
+curl -fsSL https://download.lifesavor.ai/lsai-cli/apt/setup.sh | sudo bash
+
+# Fedora / RHEL / Amazon Linux (DNF/YUM)
+curl -fsSL https://download.lifesavor.ai/lsai-cli/yum/setup.sh | sudo bash
+
+# Windows (winget)
+winget install LifeSavorAI.lsai-cli
+
+# From source (any platform with Rust 1.75+)
 cd developer/cli && cargo install --path .
-
-# First-time setup
-lsai-cli setup
-lsai-cli whoami
 ```
+
+All platforms and manual downloads: [developer.lifesavor.ai/downloads](https://developer.lifesavor.ai/downloads)
 
 ### Rust SDK
 
