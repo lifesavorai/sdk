@@ -57,7 +57,7 @@ lsai-cli components update <component-id> \
   --tags automation,utility,productivity
 ```
 
-Valid categories: `General`, `Code`, `Embedding`, `Vision`, `Specialized`
+Valid categories: `Productivity`, `Communication`, `Security`, `Media`, `Developer Tools`, `Data`, `AI/ML`, `Automation`, `Infrastructure`, `Monitoring`, `Storage`, `General`
 
 ## 5. Set Up Build Configuration
 
