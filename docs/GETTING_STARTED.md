@@ -61,7 +61,7 @@ lsai-cli components update <component-id> \
 
 Valid categories depend on your component type (the portal shows the right ones automatically).
 
-Valid compatibility platforms: `linux`, `macos`, `windows`, `web`, `ios`, `android`, `tvos`
+Valid compatibility platforms: `linux`, `macos`, `windows`, `ios`, `android`, `tvos`
 
 Valid licenses: `MIT`, `Apache-2.0`, `GPL-3.0`, `BSD-2-Clause`, `BSD-3-Clause`, `ISC`, `MPL-2.0`, `LGPL-3.0`, `Proprietary`, `Custom`
 
