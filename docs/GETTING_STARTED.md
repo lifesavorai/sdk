@@ -48,16 +48,28 @@ This creates a draft component and returns a component ID. Save it — you'll ne
 
 ## 4. Set Required Metadata
 
-You **must** set a description, category, and tags before submitting for review:
+You **must** set a description, category, tags, compatibility, and license before submitting for review:
 
 ```bash
 lsai-cli components update <component-id> \
   --description "A useful skill for Life Savor agents" \
-  --category General \
-  --tags automation,utility,productivity
+  --category Productivity \
+  --tags automation,utility,productivity \
+  --compatibility linux,macos,windows \
+  --license MIT
 ```
 
-Valid categories: `Productivity`, `Communication`, `Security`, `Media`, `Developer Tools`, `Data`, `AI/ML`, `Automation`, `Infrastructure`, `Monitoring`, `Storage`, `General`
+Valid categories depend on your component type (the portal shows the right ones automatically).
+
+Valid compatibility platforms: `linux`, `macos`, `windows`, `web`, `ios`, `android`, `tvos`
+
+Valid licenses: `MIT`, `Apache-2.0`, `GPL-3.0`, `BSD-2-Clause`, `BSD-3-Clause`, `ISC`, `MPL-2.0`, `LGPL-3.0`, `Proprietary`, `Custom`
+
+You can also upload an icon:
+
+```bash
+lsai-cli components update <component-id> --icon logo.png
+```
 
 ## 5. Set Up Build Configuration
 
