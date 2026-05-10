@@ -73,3 +73,10 @@ pub fn success_response(result: Value) -> BridgeResponse {
 pub fn error_response(code: &str, message: &str) -> BridgeResponse {
     BridgeResponse::err(code, message)
 }
+
+/// Validate that an operation name is in the list of known operations.
+///
+/// Returns `true` if the operation is recognized, `false` otherwise.
+pub fn validate_operation(operation: &str, known_ops: &[&str]) -> bool {
+    known_ops.contains(&operation)
+}
