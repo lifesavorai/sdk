@@ -1,7 +1,3 @@
 /target/
 **/*.rs.bk
 *.pdb
-
-# System SDK is internal-only — not published to the public SDK repo.
-# System components are restricted to Life Savor AI org members.
-/system/
