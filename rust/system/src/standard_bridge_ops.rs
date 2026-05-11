@@ -4,7 +4,7 @@
 //! invokes for lifecycle management. This module defines constants and helpers
 //! for handling these built-in operations.
 
-use crate::{BridgeRequest, BridgeResponse, ComponentHealthStatus};
+use crate::{BridgeResponse, ComponentHealthStatus};
 use serde_json::json;
 
 /// Standard operation: return component status and metadata.
@@ -87,28 +87,23 @@ pub fn info_response(
 /// Handle the standard `component_status` bridge operation.
 ///
 /// Returns component identity, health status, version, and uptime.
+/// Accepts health as a string ("healthy", "degraded", "unhealthy") and
+/// start_time as a `std::time::Instant` for uptime calculation.
 pub fn handle_component_status(
     component_name: &str,
     component_type: &str,
-    health_status: ComponentHealthStatus,
+    health_status: &str,
     version: &str,
-    start_time: chrono::DateTime<chrono::Utc>,
+    start_time: std::time::Instant,
 ) -> BridgeResponse {
-    let uptime_seconds = (chrono::Utc::now() - start_time).num_seconds().max(0) as u64;
-    let health_str = match &health_status {
-        ComponentHealthStatus::Healthy => "healthy",
-        ComponentHealthStatus::Degraded { .. } => "degraded",
-        ComponentHealthStatus::Unhealthy { .. } => "unhealthy",
-        ComponentHealthStatus::Unknown => "unknown",
-    };
+    let uptime_seconds = start_time.elapsed().as_secs();
 
     BridgeResponse::ok(json!({
         "component": component_name,
         "component_type": component_type,
-        "health": health_str,
+        "health": health_status,
         "version": version,
         "uptime_seconds": uptime_seconds,
-        "started_at": start_time.to_rfc3339(),
     }))
 }
 

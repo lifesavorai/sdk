@@ -16,6 +16,10 @@ pub struct ToolDefinition {
     pub description: String,
     /// JSON Schema describing the tool's input parameters.
     pub input_schema: Value,
+    /// The bridge operation this tool maps to.
+    pub bridge_operation: String,
+    /// Parameter schema (alias for input_schema, used by some components).
+    pub parameters: Value,
 }
 
 /// Type alias for backwards compatibility with system components.
@@ -103,9 +107,11 @@ impl ToolDefinitionBuilder {
         });
 
         ToolDefinition {
-            name: self.name,
+            name: self.name.clone(),
             description: self.description,
-            input_schema,
+            input_schema: input_schema.clone(),
+            bridge_operation: self.name,
+            parameters: input_schema,
         }
     }
 }
