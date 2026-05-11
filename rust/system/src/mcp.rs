@@ -8,18 +8,42 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 /// An MCP tool definition that describes an operation exposed by a system component.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct ToolDefinition {
     /// The tool name (e.g., `system.memory_store.sqlite-vec.search`).
+    #[serde(default)]
     pub name: String,
     /// Human-readable description of what the tool does.
+    #[serde(default)]
     pub description: String,
     /// JSON Schema describing the tool's input parameters.
+    /// Automatically populated from `parameters` if not set explicitly.
+    #[serde(default)]
     pub input_schema: Value,
     /// The bridge operation this tool maps to.
+    #[serde(default)]
     pub bridge_operation: String,
-    /// Parameter schema (alias for input_schema, used by some components).
+    /// Parameter schema.
+    #[serde(default)]
     pub parameters: Value,
+}
+
+impl ToolDefinition {
+    /// Create a new tool definition. Sets `input_schema` to match `parameters`.
+    pub fn new(
+        name: impl Into<String>,
+        description: impl Into<String>,
+        bridge_operation: impl Into<String>,
+        parameters: Value,
+    ) -> Self {
+        Self {
+            name: name.into(),
+            description: description.into(),
+            input_schema: parameters.clone(),
+            bridge_operation: bridge_operation.into(),
+            parameters,
+        }
+    }
 }
 
 /// Type alias for backwards compatibility with system components.
