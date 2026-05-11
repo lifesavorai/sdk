@@ -64,6 +64,16 @@ pub fn require_params(request: &BridgeRequest, required: &[&str]) -> Result<(), 
     Ok(())
 }
 
+/// Extract a required parameter from a JSON object.
+///
+/// Returns the value if present, or a `BridgeValidationError::MissingParam` if not.
+pub fn extract_required_param(params: &Value, key: &str) -> Result<Value, BridgeValidationError> {
+    match params.get(key) {
+        Some(v) if !v.is_null() => Ok(v.clone()),
+        _ => Err(BridgeValidationError::MissingParam(key.to_string())),
+    }
+}
+
 /// Construct a successful bridge response.
 pub fn success_response(result: Value) -> BridgeResponse {
     BridgeResponse::ok(result)

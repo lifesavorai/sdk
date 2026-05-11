@@ -7,6 +7,45 @@
 use crate::{SystemComponentType, SystemComponentInfo};
 use std::collections::HashMap;
 
+/// A generic alias resolver that maps alias names to concrete values.
+///
+/// Used by TTS/STT components to resolve voice aliases (e.g., "default" → "en-US-Neural2-F")
+/// and by other components for similar name-to-value mappings.
+#[derive(Debug, Clone)]
+pub struct AliasResolver<T: Clone> {
+    aliases: HashMap<String, T>,
+}
+
+impl<T: Clone + ToString> AliasResolver<T> {
+    /// Create a new alias resolver from a map of alias → value.
+    pub fn new(aliases: HashMap<String, T>) -> Self {
+        Self { aliases }
+    }
+
+    /// Resolve an alias to its value, or return the input as-is if no alias matches.
+    pub fn resolve_or_passthrough(&self, key: &str) -> String {
+        match self.aliases.get(key) {
+            Some(value) => value.to_string(),
+            None => key.to_string(),
+        }
+    }
+
+    /// Resolve an alias to its value, or return None if no alias matches.
+    pub fn resolve(&self, key: &str) -> Option<&T> {
+        self.aliases.get(key)
+    }
+
+    /// Check if an alias exists.
+    pub fn has_alias(&self, key: &str) -> bool {
+        self.aliases.contains_key(key)
+    }
+
+    /// List all registered alias names.
+    pub fn aliases(&self) -> Vec<&str> {
+        self.aliases.keys().map(|s| s.as_str()).collect()
+    }
+}
+
 /// A resolved component reference with connection details.
 #[derive(Debug, Clone)]
 pub struct ResolvedComponent {
