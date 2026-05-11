@@ -100,3 +100,27 @@ pub fn log_bridge_error(
         "Bridge request failed"
     );
 }
+
+/// Mask a credential string for safe logging.
+///
+/// Preserves the first 4 and last 4 characters, replacing the middle with
+/// asterisks. Strings shorter than 12 characters are fully masked.
+///
+/// # Examples
+///
+/// ```
+/// use lifesavor_system_sdk::logging::mask_credential;
+///
+/// assert_eq!(mask_credential("sk_live_abc123xyz789"), "sk_l***********z789");
+/// assert_eq!(mask_credential("short"), "***");
+/// assert_eq!(mask_credential(""), "***");
+/// ```
+pub fn mask_credential(credential: &str) -> String {
+    if credential.len() < 12 {
+        return "***".to_string();
+    }
+    let prefix = &credential[..4];
+    let suffix = &credential[credential.len() - 4..];
+    let masked_len = credential.len() - 8;
+    format!("{}{}{}", prefix, "*".repeat(masked_len), suffix)
+}

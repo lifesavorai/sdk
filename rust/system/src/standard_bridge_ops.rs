@@ -83,3 +83,53 @@ pub fn info_response(
         "operations": operations,
     }))
 }
+
+/// Handle the standard `component_status` bridge operation.
+///
+/// Returns component identity, health status, version, and uptime.
+pub fn handle_component_status(
+    component_name: &str,
+    component_type: &str,
+    health_status: ComponentHealthStatus,
+    version: &str,
+    start_time: chrono::DateTime<chrono::Utc>,
+) -> BridgeResponse {
+    let uptime_seconds = (chrono::Utc::now() - start_time).num_seconds().max(0) as u64;
+    let health_str = match &health_status {
+        ComponentHealthStatus::Healthy => "healthy",
+        ComponentHealthStatus::Degraded { .. } => "degraded",
+        ComponentHealthStatus::Unhealthy { .. } => "unhealthy",
+        ComponentHealthStatus::Unknown => "unknown",
+    };
+
+    BridgeResponse::ok(json!({
+        "component": component_name,
+        "component_type": component_type,
+        "health": health_str,
+        "version": version,
+        "uptime_seconds": uptime_seconds,
+        "started_at": start_time.to_rfc3339(),
+    }))
+}
+
+/// Handle the standard `rotate_credentials` operation as a no-op.
+///
+/// Components that don't manage their own credentials return success
+/// with a message indicating no rotation was needed.
+pub fn handle_rotate_credentials_noop() -> BridgeResponse {
+    BridgeResponse::ok(json!({
+        "status": "no_op",
+        "message": "This component does not manage rotatable credentials",
+    }))
+}
+
+/// Handle the standard `update_component` operation as a no-op.
+///
+/// Components that don't support hot-reload of their configuration
+/// return success with a message indicating a restart is required.
+pub fn handle_update_component_noop() -> BridgeResponse {
+    BridgeResponse::ok(json!({
+        "status": "no_op",
+        "message": "This component does not support hot configuration updates. Restart the component to apply changes.",
+    }))
+}

@@ -18,6 +18,9 @@ pub struct ToolDefinition {
     pub input_schema: Value,
 }
 
+/// Type alias for backwards compatibility with system components.
+pub type McpToolDefinition = ToolDefinition;
+
 /// Builder for constructing MCP tool definitions.
 pub struct ToolDefinitionBuilder {
     name: String,
