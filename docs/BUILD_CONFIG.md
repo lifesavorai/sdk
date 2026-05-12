@@ -14,12 +14,12 @@ component:
 build:
   language: rust # Required: rust | go | python | node | cpp
   command: cargo build --release # Required: build command
-  artifact: target/release/my-component # Required: path to the built artifact
-  targets: # Optional: multi-platform targets
-    - platform: linux
-      arch: x86_64
-    - platform: macos
-      arch: aarch64
+  artifact: target/release/libmy_component.so # Required: path to the built artifact
+  targets: # Optional: runtime environments to build for
+    - runtime_env: linux-x86_64
+    - runtime_env: linux-arm64
+    - runtime_env: macos-arm64
+    - runtime_env: windows-x86_64
 security:
   skip_scan: false # Optional: skip security scan (global-admin only)
 ```
