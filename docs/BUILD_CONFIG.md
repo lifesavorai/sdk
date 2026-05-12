@@ -14,7 +14,7 @@ component:
 build:
   language: rust # Required: rust | go | python | node | cpp
   command: cargo build --release # Required: build command
-  artifact: target/release/my-component # Required: artifact path
+  artifact: target/release/my-component # Required: path to the built artifact
   targets: # Optional: multi-platform targets
     - platform: linux
       arch: x86_64
@@ -23,6 +23,30 @@ build:
 security:
   skip_scan: false # Optional: skip security scan (global-admin only)
 ```
+
+### Rust Components
+
+Rust components are compiled as shared libraries (`.so` on Linux, `.dylib` on macOS, `.dll` on Windows) that the agent loads at runtime.
+
+Your `Cargo.toml` **must** include:
+
+```toml
+[lib]
+crate-type = ["cdylib"]
+```
+
+Without this, `cargo build --release` produces a `.rlib` (Rust-only static library) instead of the shared library the platform expects.
+
+The `build.artifact` field should point to the shared library output:
+
+```yaml
+build:
+  language: rust
+  command: cargo build --release
+  artifact: target/release/libmy_component.so
+```
+
+Note: Rust converts hyphens to underscores in library names. A crate named `my-component` produces `libmy_component.so`.
 
 ### Supported Languages
 
