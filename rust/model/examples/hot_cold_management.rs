@@ -100,6 +100,8 @@ impl LlmProvider for HotColdProvider {
                 .collect(),
             features: vec!["streaming".to_string()],
             locality: Locality::Local,
+            supports_tool_calling: false,
+            supported_tool_choice_modes: vec![],
         }
     }
 

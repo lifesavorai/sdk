@@ -60,6 +60,8 @@ impl MockLlmProvider {
                 "function_calling".to_string(),
             ],
             locality: Locality::Local,
+            supports_tool_calling: false,
+            supported_tool_choice_modes: vec![],
         };
         Self {
             model_aliases: aliases,
@@ -235,6 +237,8 @@ async fn main() {
         messages: vec![],
         options: None,
         tools: None,
+        tool_choice: None,
+        cancel: None,
     };
 
     let metrics = provider.chat_completion_stream(&request, tx).await.unwrap();

@@ -101,6 +101,8 @@ impl LlmProvider for MinimalNativeProvider {
             }],
             features: vec!["text_generation".into(), "chat".into()],
             locality: crate::Locality::Local,
+            supports_tool_calling: false,
+            supported_tool_choice_modes: vec![],
         }
     }
 
@@ -182,6 +184,8 @@ async fn main() {
         messages: vec![],
         options: None,
         tools: None,
+        tool_choice: None,
+        cancel: None,
     };
 
     let (tx, mut rx) = mpsc::channel(32);

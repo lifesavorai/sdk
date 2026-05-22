@@ -89,6 +89,9 @@ pub use lifesavor_agent::providers::llm_provider::{
     PricingTier,
     LatencyClass,
     ToolDefinition,
+    ToolChoice,
+    ToolChoiceMode,
+    ToolCallError,
 };
 
 // ---------------------------------------------------------------------------
