@@ -18,13 +18,23 @@ The Life Savor Developer SDK provides tools and libraries for building component
 
 ```bash
 # macOS (Homebrew)
-curl -fsSL https://download.lifesavor.ai/lsai-cli/latest/homebrew/install.sh | bash
+brew tap Life-Savor-AI/tap && brew install lsai-cli
 
-# Debian / Ubuntu (APT)
+# Linux — Debian/Ubuntu (APT repository)
 curl -fsSL https://download.lifesavor.ai/lsai-cli/apt/setup.sh | sudo bash
+sudo apt install lsai-cli
 
-# Fedora / RHEL / Amazon Linux (DNF/YUM)
+# Linux — Debian/Ubuntu (dpkg direct install)
+curl -LO https://download.lifesavor.ai/lsai-cli/latest/x86_64-unknown-linux-gnu/lsai-cli_amd64.deb
+sudo dpkg -i lsai-cli_amd64.deb
+
+# Linux — Fedora/RHEL/Amazon Linux (DNF/YUM repository)
 curl -fsSL https://download.lifesavor.ai/lsai-cli/yum/setup.sh | sudo bash
+sudo dnf install lsai-cli
+
+# Linux — Fedora/RHEL/Amazon Linux (rpm direct install)
+curl -LO https://download.lifesavor.ai/lsai-cli/latest/x86_64-unknown-linux-gnu/lsai-cli.x86_64.rpm
+sudo rpm -i lsai-cli.x86_64.rpm
 
 # Windows (winget)
 winget install LifeSavorAI.lsai-cli
@@ -33,7 +43,7 @@ winget install LifeSavorAI.lsai-cli
 cd developer/cli && cargo install --path .
 ```
 
-All platforms and manual downloads: [developer.lifesavor.ai/downloads](https://developer.lifesavor.ai/downloads)
+All platforms (macOS arm64, Linux x86_64, Linux arm64, Windows x86_64) and manual downloads: [developer.lifesavor.ai/downloads](https://developer.lifesavor.ai/downloads)
 
 ### Rust SDK
 

@@ -4,7 +4,7 @@
 
 - Node.js 20+ or Rust 1.75+ (depending on component type)
 - Git
-- `lsai-cli` installed ([installation guide](./README.md#installation))
+- `lsai-cli` installed ([installation guide](./README.md#installation) or [Downloads page](https://developer.lifesavor.ai/downloads))
 
 ## 1. Create a Developer Account
 
@@ -12,20 +12,32 @@ Visit [developer.lifesavor.ai](https://developer.lifesavor.ai) and sign up with 
 
 ## 2. Install and Configure the CLI
 
+Install `lsai-cli` for your platform. For all platforms and package formats, visit the [Downloads page](https://developer.lifesavor.ai/downloads).
+
 ```bash
 # macOS (Homebrew)
-curl -fsSL https://download.lifesavor.ai/lsai-cli/latest/homebrew/install.sh | bash
+brew tap Life-Savor-AI/tap && brew install lsai-cli
 
-# Debian / Ubuntu (APT)
+# Linux — Debian/Ubuntu (APT repository)
 curl -fsSL https://download.lifesavor.ai/lsai-cli/apt/setup.sh | sudo bash
+sudo apt install lsai-cli
 
-# Fedora / RHEL / Amazon Linux (DNF/YUM)
+# Linux — Debian/Ubuntu (dpkg direct install, x86_64)
+curl -LO https://download.lifesavor.ai/lsai-cli/latest/x86_64-unknown-linux-gnu/lsai-cli_amd64.deb
+sudo dpkg -i lsai-cli_amd64.deb
+
+# Linux — Fedora/RHEL/Amazon Linux (DNF/YUM repository)
 curl -fsSL https://download.lifesavor.ai/lsai-cli/yum/setup.sh | sudo bash
+sudo dnf install lsai-cli
+
+# Linux — Fedora/RHEL/Amazon Linux (rpm direct install, x86_64)
+curl -LO https://download.lifesavor.ai/lsai-cli/latest/x86_64-unknown-linux-gnu/lsai-cli.x86_64.rpm
+sudo rpm -i lsai-cli.x86_64.rpm
 
 # Windows (winget)
 winget install LifeSavorAI.lsai-cli
 
-# From source (any platform with Rust)
+# From source (any platform with Rust 1.75+)
 cd developer/cli && cargo install --path .
 
 # First-time setup — paste your API key (lsk_ prefix) from the portal
@@ -34,6 +46,8 @@ lsai-cli setup
 # Verify
 lsai-cli whoami
 ```
+
+> **Note:** Linux arm64 packages are also available. See the [Downloads page](https://developer.lifesavor.ai/downloads) for arm64 DEB, RPM, and tarball links.
 
 ## 3. Create a Component
 
