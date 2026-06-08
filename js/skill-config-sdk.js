@@ -480,13 +480,78 @@ function validationTimeout(msg) {
 }
 
 // ---------------------------------------------------------------------------
+// Canvas capability helpers
+// ---------------------------------------------------------------------------
+
+var CANVAS_CONTENT_TYPES = ['video', 'scene_3d', 'layout', 'image', 'web', 'custom'];
+var CANVAS_PLATFORMS = ['tvos', 'ios', 'macos', 'windows', 'linux'];
+
+/**
+ * Create a validated canvas capability declaration for the skill manifest.
+ *
+ * @param {Object} definition
+ * @param {string[]} definition.contentTypes - Canvas content types (video, scene_3d, layout, image, web, custom)
+ * @param {string[]} [definition.platforms] - Target platforms (tvos, ios, macos, etc.)
+ * @param {boolean} [definition.voiceInteractive=true] - Accept voice during canvas
+ * @param {Object} [definition.assets] - Bundled asset declarations
+ * @param {string[]} [definition.requiresSystemComponents] - Required system components
+ * @returns {Object} A validated canvas capability object for the manifest
+ * @throws {Error} If content types are invalid or missing
+ */
+function createCanvasCapability(definition) {
+  if (!definition || typeof definition !== 'object') {
+    throw new Error('createCanvasCapability: definition must be an object');
+  }
+  if (!Array.isArray(definition.contentTypes) || definition.contentTypes.length === 0) {
+    throw new Error('createCanvasCapability: contentTypes must be a non-empty array');
+  }
+  for (var i = 0; i < definition.contentTypes.length; i++) {
+    if (CANVAS_CONTENT_TYPES.indexOf(definition.contentTypes[i]) === -1) {
+      throw new Error(
+        'createCanvasCapability: invalid content type "' + definition.contentTypes[i] +
+        '". Valid: ' + CANVAS_CONTENT_TYPES.join(', ')
+      );
+    }
+  }
+  if (definition.platforms) {
+    for (var p = 0; p < definition.platforms.length; p++) {
+      if (CANVAS_PLATFORMS.indexOf(definition.platforms[p]) === -1) {
+        throw new Error(
+          'createCanvasCapability: invalid platform "' + definition.platforms[p] +
+          '". Valid: ' + CANVAS_PLATFORMS.join(', ')
+        );
+      }
+    }
+  }
+
+  var capability = {
+    content_types: definition.contentTypes.slice(),
+    voice_interactive: definition.voiceInteractive !== false,
+    dismissible: true
+  };
+  if (definition.platforms) {
+    capability.platforms = definition.platforms.slice();
+  }
+  if (definition.assets) {
+    capability.assets = definition.assets;
+  }
+  if (definition.requiresSystemComponents) {
+    capability.requires_system_components = definition.requiresSystemComponents.slice();
+  }
+  return capability;
+}
+
+// ---------------------------------------------------------------------------
 // Exports
 // ---------------------------------------------------------------------------
 
 module.exports = {
   CONFIG_FIELD_TYPES: CONFIG_FIELD_TYPES,
+  CANVAS_CONTENT_TYPES: CANVAS_CONTENT_TYPES,
+  CANVAS_PLATFORMS: CANVAS_PLATFORMS,
   createConfigSchema: createConfigSchema,
   createSetupStep: createSetupStep,
+  createCanvasCapability: createCanvasCapability,
   validateConfigValues: validateConfigValues,
   parseValidationRequest: parseValidationRequest,
   createValidationResponse: createValidationResponse,

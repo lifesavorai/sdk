@@ -105,6 +105,9 @@
           "type": "boolean",
           "description": "Whether this skill provides RAG (retrieval-augmented generation) content.",
           "default": false
+        },
+        "canvas": {
+          "$ref": "#/$defs/CanvasCapability"
         }
       },
       "additionalProperties": false,
@@ -312,6 +315,103 @@
         "file": {
           "type": "string",
           "description": "Relative path to the Markdown file."
+        }
+      },
+      "additionalProperties": false
+    },
+    "CanvasCapability": {
+      "type": "object",
+      "description": "Declares that this skill can render fullscreen content on agents that support canvas (tvOS, iOS, desktop). Skills with canvas capabilities can take over the screen with video, 3D scenes, declarative layouts, or images.",
+      "required": ["content_types"],
+      "properties": {
+        "content_types": {
+          "type": "array",
+          "description": "Types of canvas content this skill can render. At least one must be declared.",
+          "items": {
+            "type": "string",
+            "enum": ["video", "scene_3d", "layout", "image", "web", "custom"]
+          },
+          "minItems": 1
+        },
+        "platforms": {
+          "type": "array",
+          "description": "Platforms where canvas rendering is supported. If omitted, all canvas-capable platforms are assumed.",
+          "items": {
+            "type": "string",
+            "enum": ["tvos", "ios", "macos", "windows", "linux"]
+          }
+        },
+        "voice_interactive": {
+          "type": "boolean",
+          "description": "Whether the skill accepts voice commands while the canvas is displayed. When true, voice input is forwarded to the skill via canvas_voice_input messages.",
+          "default": true
+        },
+        "dismissible": {
+          "type": "boolean",
+          "description": "Whether the user can dismiss the canvas at any time. Always true for safety — this field is informational.",
+          "default": true
+        },
+        "assets": {
+          "$ref": "#/$defs/CanvasAssets"
+        },
+        "requires_system_components": {
+          "type": "array",
+          "description": "System components that must be installed for canvas rendering (e.g., unity-runtime, unreal-runtime). The platform will prompt the user to install these when the skill is installed.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "CanvasAssets": {
+      "type": "object",
+      "description": "Static assets bundled with the skill for canvas rendering. These are downloaded when the skill is installed and cached on the agent.",
+      "properties": {
+        "scenes": {
+          "type": "array",
+          "description": "3D scene assets (.scn, .usdz, .dae) included in the skill bundle.",
+          "items": {
+            "$ref": "#/$defs/CanvasAssetEntry"
+          }
+        },
+        "videos": {
+          "type": "array",
+          "description": "Video assets included in the skill bundle.",
+          "items": {
+            "$ref": "#/$defs/CanvasAssetEntry"
+          }
+        },
+        "images": {
+          "type": "array",
+          "description": "Image assets included in the skill bundle.",
+          "items": {
+            "$ref": "#/$defs/CanvasAssetEntry"
+          }
+        },
+        "total_size_mb": {
+          "type": "number",
+          "description": "Approximate total size of all canvas assets in megabytes. Shown to the user before installation."
+        }
+      },
+      "additionalProperties": false
+    },
+    "CanvasAssetEntry": {
+      "type": "object",
+      "description": "A single bundled asset file.",
+      "required": ["id", "path"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this asset (referenced in canvas commands)."
+        },
+        "path": {
+          "type": "string",
+          "description": "Relative path to the asset within the skill bundle."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the asset."
         }
       },
       "additionalProperties": false

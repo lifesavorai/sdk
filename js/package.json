@@ -1,9 +1,14 @@
 {
   "name": "lifesavor-skill-config-sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Life Savor Skill Configuration SDK for JavaScript",
+  "description": "Life Savor Skill Configuration & Canvas SDK for JavaScript",
   "main": "skill-config-sdk.js",
+  "exports": {
+    ".": "./skill-config-sdk.js",
+    "./config": "./skill-config-sdk.js",
+    "./canvas": "./canvas-sdk.js"
+  },
   "scripts": {
     "test": "vitest run"
   },

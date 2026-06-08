@@ -76,6 +76,7 @@ pub mod component_manifest;
 pub mod sandbox_compliance;
 pub mod config_builder;
 pub mod validation_handler;
+pub mod canvas;
 
 #[cfg(feature = "analytics")]
 pub mod analytics;

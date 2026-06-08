@@ -168,3 +168,88 @@ lsai-cli config validate
 # Check component status
 lsai-cli components status <component-id>
 ```
+
+## Fullscreen Canvas Skills (tvOS / Apple TV)
+
+Skills can take over the full screen on Apple TV (and other canvas-capable agents) to render video, 3D scenes, interactive layouts, and more.
+
+### Quick Start: Canvas Skill
+
+1. **Declare canvas capability** in your `skill.json`:
+
+```json
+{
+  "capabilities": {
+    "canvas": {
+      "content_types": ["scene_3d", "layout"],
+      "platforms": ["tvos"],
+      "voice_interactive": true,
+      "assets": {
+        "scenes": [{ "id": "my-scene", "path": "assets/scene.usdz" }],
+        "total_size_mb": 20
+      }
+    }
+  }
+}
+```
+
+2. **Open a canvas** by sending a `canvas_open` WebSocket command from your skill
+3. **Stream updates** with `canvas_scene_command` or `canvas_update` messages
+4. **Handle voice** via `canvas_voice_input` events
+5. **Close** with `canvas_close`
+
+### SDK Support
+
+**Rust:**
+```rust
+use lifesavor_skill_sdk::canvas::*;
+
+let content = Scene3DContent {
+    asset_url: Some("https://...".into()),
+    camera: Some(SceneCamera { position: vec![0.0, 1.5, 3.0], ..Default::default() }),
+    ..Default::default()
+};
+```
+
+**JavaScript:**
+```javascript
+var canvas = require('lifesavor-skill-config-sdk/canvas');
+
+var cmd = canvas.createCanvasOpen({
+  sessionId: 'my-session',
+  componentId: 'my-skill',
+  contentType: 'scene_3d',
+  content: canvas.createScene3D({ assetUrl: 'https://...' })
+});
+```
+
+### Canvas Content Types
+
+| Type | Description | Best for |
+|------|-------------|----------|
+| `scene_3d` | SceneKit 3D scenes | Yoga instructor, 3D visualizations, interactive experiences |
+| `video` | HLS/MP4 playback | Guided workouts, tutorials |
+| `layout` | Declarative JSON UI | Calendars, dashboards, status displays |
+| `image` | Static/slideshow | Photo displays, ambient art |
+
+### Full Documentation
+
+See [CANVAS_GUIDE.md](./CANVAS_GUIDE.md) for the complete protocol reference, all scene commands, asset management, and UX guidelines.
+
+### Examples
+
+- **Rust:** `developer/sdk/rust/skill/examples/canvas_skill.rs` — Yoga instructor with SceneKit
+- **JavaScript:** `developer/sdk/js/examples/canvas-calendar-skill.js` — Calendar display with layout
+
+### Platform Compatibility
+
+Skills with canvas capabilities are automatically filtered in the marketplace by platform. When a user browses skills on Apple TV, only skills declaring `"platforms": ["tvos"]` (or no platform restriction) will appear.
+
+The tvOS agent advertises its capabilities at registration:
+```json
+{
+  "capabilities": ["voice_io", "canvas_video", "canvas_scene_3d", "canvas_layout", "canvas_image", "always_on"]
+}
+```
+
+Skills should check agent capabilities before opening a canvas to gracefully degrade on agents that don't support it.
