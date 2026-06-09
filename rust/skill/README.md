@@ -80,6 +80,41 @@ fn main() -> lifesavor_skill_sdk::error::Result<()> {
 
 All features are disabled by default. The core JSON stdin/stdout types are always available.
 
+## Upgrade & Adapter Support
+
+Declare how your component behaves during upgrades and what fine-tuned adapters it depends on:
+
+```rust
+use lifesavor_skill_sdk::prelude::*;
+
+// Declare upgrade behavior
+let upgrade = UpgradeSectionBuilder::new()
+    .min_agent_version("2.5.0")
+    .preserve_data("data/")
+    .health_check_command("./scripts/health-check.sh")
+    .pre_upgrade_hook("scripts/pre-upgrade.sh")
+    .post_upgrade_hook("scripts/post-upgrade.sh")
+    .migration("1.*", "2.0.0", "migrations/v1_to_v2.sh")
+        .description("Migrate config schema")
+        .required()
+    .build()
+    .unwrap();
+
+// Declare adapter dependencies
+let adapter = AdapterDependencyBuilder::new("medical-ner-lora")
+    .lora()
+    .base_model("llama3", 7000)
+    .source("https://cdn.lifesavor.ai/adapters/medical-ner/1.2.0.tar.gz")
+    .version("1.2.0")
+    .version_constraint(">=1.0.0, <2.0.0")
+    .checksum("abc123def456...")
+    .size_bytes(52_428_800)
+    .build()
+    .unwrap();
+```
+
+The agent handles all upgrade orchestration (backup, download, verify, install, rollback) automatically. See the [Component Upgrades docs](https://docs.lifesavor.ai/developer-tools/component-upgrades) for the full manifest reference.
+
 ## Binaries
 
 - `sandbox-runner` — Spawns a skill as a child process with `ProcessSandbox` restrictions for local testing without a running agent. Use `cargo run --bin sandbox-runner -- --manifest path/to/manifest.toml`.

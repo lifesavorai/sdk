@@ -51,3 +51,47 @@ license = "MIT"
 # [[badges]]
 # badge_type = "installs"
 # url = "https://developer.stage.lifesavor.ai/badges/my-skill/installs.svg"
+
+# --- Upgrade Behavior ---
+# Controls how the agent handles upgrades of your component.
+# All fields are optional — the agent uses sensible defaults without this section.
+# See: https://docs.lifesavor.ai/developer-tools/component-upgrades
+
+# [upgrade]
+# min_agent_version = "2.0.0"       # Minimum agent version required
+# breaking = false                    # true = canary rollout (gradual deploy)
+# notes = "Bug fixes and improvements"
+# preserve_data = ["data/"]           # Directories preserved across upgrades
+# required_agent_features = []        # Agent features your component needs
+
+# [upgrade.health_check]
+# type = "command"                    # "http", "command", "tcp", or "none"
+# endpoint = "./scripts/health-check.sh"
+# timeout_secs = 10
+# retries = 3
+
+# [upgrade.hooks]
+# pre_upgrade = "scripts/pre-upgrade.sh"   # Runs before backup
+# post_upgrade = "scripts/post-upgrade.sh" # Runs after install
+
+# [[upgrade.migrations]]
+# from = "1.*"                        # Glob: any 1.x source version
+# to = "2.0.0"                        # Exact target version
+# script = "migrations/v1_to_v2.sh"
+# description = "Migrate config schema from v1 to v2"
+# required = true                     # false = failure won't rollback
+
+# --- Adapter Dependencies (for skills with fine-tuned models) ---
+# The agent downloads and manages these automatically.
+# Users just click Install — they never see this.
+
+# [[adapter_dependencies]]
+# name = "my-lora-adapter"
+# adapter_type = "lora"               # "lora" or "qlora"
+# base_model_architecture = "llama3"
+# min_base_params = 7000              # Millions of parameters
+# source_url = "https://cdn.lifesavor.ai/adapters/my-adapter/1.0.0.tar.gz"
+# version = "1.0.0"
+# version_constraint = ">=1.0.0, <2.0.0"
+# checksum_sha256 = "..."
+# size_bytes = 52428800

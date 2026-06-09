@@ -19,6 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Re-exports of `ComponentDeclaration`, `ToolSchema` from `lifesavor-agent-types`
 - Re-exports of `BridgeRequest`, `BridgeResponse`, `SandboxConfig`, `SkillManifest` from `lifesavor-agent-types`
+- **`upgrade_builder` module** — Fluent builders for the `[upgrade]` manifest section:
+  - `UpgradeSectionBuilder` — declare min agent version, breaking changes, health checks, lifecycle hooks, migration scripts, data preservation
+  - `AdapterDependencyBuilder` — declare fine-tuned adapter dependencies with base model requirements and version constraints
+  - `MigrationBuilder` — sub-builder for glob-based migration rules
+- **Re-exports from `lifesavor-agent-types::upgrade_manifest`:**
+  - `UpgradeSection`, `UpgradeHealthCheck`, `UpgradeHookPaths`, `MigrationEntry`
+  - `AdapterDependencyDeclaration`
+  - `validate_upgrade_section()`, `validate_adapter_dependency()`
+- Prelude now includes all upgrade types and builders
+- Component manifest template includes commented `[upgrade]` and `[[adapter_dependencies]]` sections
 
 ### Notes
 

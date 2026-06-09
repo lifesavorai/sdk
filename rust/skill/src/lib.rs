@@ -75,6 +75,7 @@ pub mod build_config;
 pub mod component_manifest;
 pub mod sandbox_compliance;
 pub mod config_builder;
+pub mod upgrade_builder;
 pub mod validation_handler;
 pub mod canvas;
 
@@ -190,6 +191,21 @@ pub use lifesavor_agent_types::skill_config::{
     ValidationResponse,
     ValidationContext,
     SetupComplexity,
+};
+
+// ---------------------------------------------------------------------------
+// Re-exports: Upgrade manifest types from lifesavor-agent-types
+// ---------------------------------------------------------------------------
+
+/// Upgrade manifest types for controlling component upgrade behavior.
+pub use lifesavor_agent_types::upgrade_manifest::{
+    UpgradeSection,
+    UpgradeHealthCheck,
+    UpgradeHookPaths,
+    MigrationEntry,
+    AdapterDependencyDeclaration,
+    validate_upgrade_section,
+    validate_adapter_dependency,
 };
 
 /// Concrete credential manager (requires `agent-runtime` feature).

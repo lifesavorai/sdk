@@ -51,6 +51,23 @@ pub use crate::{
     CredentialSource,
 };
 
+// Upgrade manifest types
+pub use crate::{
+    UpgradeSection,
+    UpgradeHealthCheck,
+    UpgradeHookPaths,
+    MigrationEntry,
+    AdapterDependencyDeclaration,
+    validate_upgrade_section,
+    validate_adapter_dependency,
+};
+
+// Upgrade builders
+pub use crate::upgrade_builder::{
+    UpgradeSectionBuilder,
+    AdapterDependencyBuilder,
+};
+
 // Process sandbox (requires agent-runtime feature)
 #[cfg(feature = "agent-runtime")]
 pub use crate::ProcessSandbox;

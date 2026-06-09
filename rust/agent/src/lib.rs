@@ -14,4 +14,5 @@ pub mod credential;
 pub mod component_declaration;
 pub mod skill_config;
 pub mod skill_provider;
+pub mod upgrade_manifest;
 pub mod voice;
