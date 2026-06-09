@@ -77,6 +77,7 @@ fn main() -> lifesavor_skill_sdk::error::Result<()> {
 |------|-------------|
 | `mcp` | MCP transport types and protocol support |
 | `analytics` | Developer Portal analytics reporting |
+| `runtime-api` | Adapter loading and host channel communication (requires tokio) |
 
 All features are disabled by default. The core JSON stdin/stdout types are always available.
 
@@ -129,6 +130,7 @@ The agent handles all upgrade orchestration (backup, download, verify, install, 
 ## Documentation
 
 - [Getting Started](docs/GETTING_STARTED.md) — Build a minimal skill from scratch
+- [Fine-Tuned Adapters](docs/ADAPTERS.md) — Declare, upload, load, and manage LoRA/QLoRA adapters
 - [Deployment Guide](docs/DEPLOYMENT.md) — Compile, deploy, and verify your skill
 - [Compatibility](COMPATIBILITY.md) — SDK ↔ agent version mapping
 - [Changelog](CHANGELOG.md) — Release history
