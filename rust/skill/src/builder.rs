@@ -26,12 +26,14 @@
 //! let provider = SkillProviderBuilder::new(manifest)
 //!     .expect("valid skill manifest")
 //!     .tool(tool)
-//!     .build();
+//!     .build()
+//!     .expect("valid provider");
 //! ```
 
 use async_trait::async_trait;
 use serde_json::Value;
 
+use crate::adapter::{AdapterDependency, AdapterDependenciesSection, validate_adapter_dependency_spec};
 use crate::error::SkillSdkError;
 use crate::{
     HealthStatus, ManifestValidationError, ProviderManifest, ProviderType,
@@ -142,6 +144,7 @@ impl ToolSchemaBuilder {
 pub struct SkillProviderBuilder {
     manifest: ProviderManifest,
     tools: Vec<ToolSchema>,
+    adapter_dependencies: Vec<AdapterDependency>,
 }
 
 impl SkillProviderBuilder {
@@ -171,6 +174,7 @@ impl SkillProviderBuilder {
         Ok(Self {
             manifest,
             tools: Vec::new(),
+            adapter_dependencies: Vec::new(),
         })
     }
 
@@ -180,17 +184,97 @@ impl SkillProviderBuilder {
         self
     }
 
+    /// Declare an adapter dependency for this skill.
+    ///
+    /// Adapter dependencies are serialized into the `[[adapter_dependencies]]`
+    /// section of the skill manifest TOML. Each dependency is validated when
+    /// [`build()`](Self::build) is called.
+    ///
+    /// # Example
+    ///
+    /// ```rust,ignore
+    /// use lifesavor_skill_sdk::adapter::{AdapterDependency, AdapterType};
+    ///
+    /// let provider = SkillProviderBuilder::new(manifest)?
+    ///     .adapter_dependency(AdapterDependency {
+    ///         name: "medical-pii-lora".to_string(),
+    ///         adapter_type: AdapterType::LoRA,
+    ///         base_model_architecture: "llama3".to_string(),
+    ///         min_base_params: 7000,
+    ///         source_url: "https://cdn.lifesavor.dev/adapters/medical-pii-lora/1.2.0/".to_string(),
+    ///         version_constraint: Some(">=1.0.0, <2.0.0".to_string()),
+    ///     })
+    ///     .build();
+    /// ```
+    pub fn adapter_dependency(mut self, dep: AdapterDependency) -> Self {
+        self.adapter_dependencies.push(dep);
+        self
+    }
+
+    /// Generate the `[[adapter_dependencies]]` TOML section for the manifest.
+    ///
+    /// Returns `None` if no adapter dependencies have been declared.
+    /// Returns an error if any adapter dependency fails validation.
+    pub fn adapter_dependencies_toml(&self) -> Result<Option<String>, SkillSdkError> {
+        if self.adapter_dependencies.is_empty() {
+            return Ok(None);
+        }
+
+        // Validate all dependencies
+        for dep in &self.adapter_dependencies {
+            let errors = validate_adapter_dependency_spec(dep);
+            if !errors.is_empty() {
+                let messages: Vec<String> = errors.iter().map(|e| e.to_string()).collect();
+                return Err(SkillSdkError::ConfigBuilder(format!(
+                    "Adapter dependency '{}' validation failed:\n  - {}",
+                    dep.name,
+                    messages.join("\n  - ")
+                )));
+            }
+        }
+
+        let section = AdapterDependenciesSection::new(self.adapter_dependencies.clone());
+        let toml_str = section.to_toml().map_err(|e| {
+            SkillSdkError::ConfigBuilder(format!(
+                "Failed to serialize adapter_dependencies to TOML: {}",
+                e
+            ))
+        })?;
+
+        Ok(Some(toml_str))
+    }
+
     /// Consume the builder and produce a scaffold [`SkillProvider`]
     /// implementation.
     ///
-    /// All trait methods are stubbed with `unimplemented!()` except
-    /// `list_tools` which returns the registered tool schemas. The returned
-    /// struct stores the manifest and tools for reference.
-    pub fn build(self) -> ScaffoldSkillProvider {
-        ScaffoldSkillProvider {
+    /// Validates all adapter dependencies before building. All trait methods
+    /// are stubbed with `unimplemented!()` except `list_tools` which returns
+    /// the registered tool schemas. The returned struct stores the manifest,
+    /// tools, and adapter dependencies for reference.
+    ///
+    /// # Panics
+    ///
+    /// Does not panic. Returns the scaffold unconditionally after validation
+    /// passes in `new()`.
+    pub fn build(self) -> Result<ScaffoldSkillProvider, SkillSdkError> {
+        // Validate adapter dependencies
+        for dep in &self.adapter_dependencies {
+            let errors = validate_adapter_dependency_spec(dep);
+            if !errors.is_empty() {
+                let messages: Vec<String> = errors.iter().map(|e| e.to_string()).collect();
+                return Err(SkillSdkError::ConfigBuilder(format!(
+                    "Adapter dependency '{}' validation failed:\n  - {}",
+                    dep.name,
+                    messages.join("\n  - ")
+                )));
+            }
+        }
+
+        Ok(ScaffoldSkillProvider {
             manifest: self.manifest,
             tools: self.tools,
-        }
+            adapter_dependencies: self.adapter_dependencies,
+        })
     }
 }
 
@@ -199,11 +283,14 @@ impl SkillProviderBuilder {
 /// `list_tools` returns the tool schemas registered via the builder.
 /// All other trait methods panic with `unimplemented!()`. Replace each stub
 /// with your real implementation incrementally.
+#[derive(Debug)]
 pub struct ScaffoldSkillProvider {
     /// The validated provider manifest.
     pub manifest: ProviderManifest,
     /// Tool schemas registered via the builder.
     pub tools: Vec<ToolSchema>,
+    /// Adapter dependencies declared via the builder.
+    pub adapter_dependencies: Vec<AdapterDependency>,
 }
 
 #[async_trait]
@@ -448,7 +535,8 @@ mod tests {
         let manifest = valid_skill_manifest();
         let provider = SkillProviderBuilder::new(manifest.clone())
             .unwrap()
-            .build();
+            .build()
+            .unwrap();
         assert_eq!(provider.manifest.instance_name, "test-skill");
     }
 
@@ -464,7 +552,8 @@ mod tests {
         let provider = SkillProviderBuilder::new(manifest)
             .unwrap()
             .tool(tool)
-            .build();
+            .build()
+            .unwrap();
 
         assert_eq!(provider.tools.len(), 1);
         assert_eq!(provider.tools[0].name, "greet");
@@ -482,10 +571,93 @@ mod tests {
         let provider = SkillProviderBuilder::new(manifest)
             .unwrap()
             .tool(tool)
-            .build();
+            .build()
+            .unwrap();
 
         let tools = provider.list_tools().await.unwrap();
         assert_eq!(tools.len(), 1);
         assert_eq!(tools[0].name, "search");
+    }
+
+    // -- Adapter dependency builder tests --
+
+    #[test]
+    fn provider_builder_adds_adapter_dependency() {
+        use crate::adapter::{AdapterDependency, AdapterType};
+
+        let manifest = valid_skill_manifest();
+        let dep = AdapterDependency {
+            name: "medical-pii-lora".to_string(),
+            adapter_type: AdapterType::LoRA,
+            base_model_architecture: "llama3".to_string(),
+            min_base_params: 7000,
+            source_url: "https://cdn.lifesavor.dev/adapters/medical-pii-lora/1.2.0/".to_string(),
+            version_constraint: Some(">=1.0.0, <2.0.0".to_string()),
+        };
+
+        let provider = SkillProviderBuilder::new(manifest)
+            .unwrap()
+            .adapter_dependency(dep.clone())
+            .build()
+            .unwrap();
+
+        assert_eq!(provider.adapter_dependencies.len(), 1);
+        assert_eq!(provider.adapter_dependencies[0], dep);
+    }
+
+    #[test]
+    fn provider_builder_rejects_invalid_adapter_dependency() {
+        use crate::adapter::{AdapterDependency, AdapterType};
+
+        let manifest = valid_skill_manifest();
+        let dep = AdapterDependency {
+            name: "".to_string(), // invalid: empty name
+            adapter_type: AdapterType::LoRA,
+            base_model_architecture: "llama3".to_string(),
+            min_base_params: 7000,
+            source_url: "https://cdn.lifesavor.dev/x".to_string(),
+            version_constraint: None,
+        };
+
+        let result = SkillProviderBuilder::new(manifest)
+            .unwrap()
+            .adapter_dependency(dep)
+            .build();
+
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains("name"));
+    }
+
+    #[test]
+    fn provider_builder_generates_adapter_dependencies_toml() {
+        use crate::adapter::{AdapterDependency, AdapterType};
+
+        let manifest = valid_skill_manifest();
+        let dep = AdapterDependency {
+            name: "medical-pii-lora".to_string(),
+            adapter_type: AdapterType::LoRA,
+            base_model_architecture: "llama3".to_string(),
+            min_base_params: 7000,
+            source_url: "https://cdn.lifesavor.dev/adapters/medical-pii-lora/1.2.0/".to_string(),
+            version_constraint: Some(">=1.0.0, <2.0.0".to_string()),
+        };
+
+        let builder = SkillProviderBuilder::new(manifest)
+            .unwrap()
+            .adapter_dependency(dep);
+
+        let toml_str = builder.adapter_dependencies_toml().unwrap().unwrap();
+        assert!(toml_str.contains("[[adapter_dependencies]]"));
+        assert!(toml_str.contains("medical-pii-lora"));
+        assert!(toml_str.contains("lora"));
+        assert!(toml_str.contains("llama3"));
+        assert!(toml_str.contains("7000"));
+    }
+
+    #[test]
+    fn provider_builder_no_adapter_deps_returns_none() {
+        let manifest = valid_skill_manifest();
+        let builder = SkillProviderBuilder::new(manifest).unwrap();
+        assert_eq!(builder.adapter_dependencies_toml().unwrap(), None);
     }
 }

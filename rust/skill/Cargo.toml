@@ -15,9 +15,11 @@ readme = "README.md"
 default = []
 mcp = []
 analytics = []
+# Enable the runtime API (adapter loading, host channel) — requires tokio.
+runtime-api = ["dep:tokio"]
 # Pull in the full agent crate for the sandbox-runner binary and
 # ProcessSandbox / EnforcementContext types.
-agent-runtime = ["dep:lifesavor-agent", "dep:tokio"]
+agent-runtime = ["dep:lifesavor-agent", "runtime-api"]
 
 [dependencies]
 # For crates.io publishing, replace path dependencies with version dependencies:
@@ -35,7 +37,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 toml = "0.8"
 tracing = "0.1"
-tokio = { version = "1.36", features = ["full"], optional = true }
+tokio = { version = "1.36", features = ["io-util", "io-std", "sync", "macros"], optional = true }
 chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1.7", features = ["v4", "serde"] }
 async-trait = "0.1"

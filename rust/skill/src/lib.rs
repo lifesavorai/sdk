@@ -62,11 +62,14 @@
 //!     .build()?;
 //!
 //! let manifest = parse_manifest_file("provider-manifest.toml")?;
-//! let provider = SkillProviderBuilder::new(manifest)?.tool(tool).build();
+//! let provider = SkillProviderBuilder::new(manifest)?.tool(tool).build()?;
 //! ```
 
 pub mod prelude;
 pub mod builder;
+pub mod adapter;
+#[cfg(feature = "runtime-api")]
+pub mod host_channel;
 pub mod health;
 pub mod error;
 pub mod testing;
