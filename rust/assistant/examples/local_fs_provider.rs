@@ -67,6 +67,7 @@ impl AssistantProvider for LocalFsProvider {
             warnings: vec![],
             definition: def,
             system_prompt,
+            root_memory: None,
         })
     }
 }

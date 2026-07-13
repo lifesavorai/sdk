@@ -17,6 +17,7 @@ analytics = []
 
 [dependencies]
 lifesavor-agent = { path = "../../../../agents/cross-platform/source" }
+lifesavor-agent-types = { path = "../agent" }
 thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

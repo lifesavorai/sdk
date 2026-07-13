@@ -6,6 +6,7 @@
 
 pub mod system_component;
 pub mod bridge;
+pub mod memory;
 pub mod streaming;
 pub mod error_chain;
 pub mod manifest;

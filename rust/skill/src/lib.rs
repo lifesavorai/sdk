@@ -211,6 +211,49 @@ pub use lifesavor_agent_types::upgrade_manifest::{
     validate_adapter_dependency,
 };
 
+// ---------------------------------------------------------------------------
+// Re-exports: Memory types from lifesavor-agent-types (Req 20.4)
+// ---------------------------------------------------------------------------
+
+/// Memory bridge protocol types for interacting with the agent's local
+/// Soul Memory Store from within skill execution.
+pub use lifesavor_agent_types::memory::{
+    // Core types
+    MemoryRecord,
+    MemoryProposal,
+    MemorySeed,
+    PersonaDefinition,
+    // Enums
+    MemoryType,
+    ContentFormat,
+    ScopeType,
+    MemoryStatus,
+    Verbosity,
+    Formality,
+    // Supporting structs
+    Provenance,
+    SeedScope,
+    PersonaTrait,
+    CommunicationStyle,
+    ScoredMemory,
+    // Bridge request types
+    MemoryCreateRequest,
+    MemoryReadRequest,
+    MemoryUpdateRequest,
+    MemoryDeleteRequest,
+    MemoryProposeRequest,
+    MemorySearchRequest,
+    // Bridge response types
+    MemoryCreateResponse,
+    MemoryReadResponse,
+    MemoryUpdateResponse,
+    MemoryDeleteResponse,
+    MemoryProposeResponse,
+    MemorySearchResponse,
+    // Operation constants
+    operations as memory_operations,
+};
+
 /// Concrete credential manager (requires `agent-runtime` feature).
 #[cfg(feature = "agent-runtime")]
 pub use lifesavor_agent::providers::credential_manager::CredentialManager;

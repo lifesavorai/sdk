@@ -1,0 +1,130 @@
+# ============================================================================
+# memory.toml — Memory Seed File
+# ============================================================================
+#
+# This file defines initial memories to pre-load into the Soul Memory Store
+# when an assistant is first activated. Seeds are loaded exactly once — on
+# subsequent activations they are skipped.
+#
+# Referenced from the assistant definition via the `memory_seed_file` field.
+#
+# Rules:
+#   - Maximum 500 entries per file
+#   - Each key must be unique within its scope (global or per-assistant)
+#   - If a key conflicts with an existing record, that seed is skipped (logged)
+#   - Provenance is automatically set to source_type="seed", source_ref=<file path>
+#
+# File format: TOML (https://toml.io)
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# [[memories]] — Each entry defines one memory seed
+# ---------------------------------------------------------------------------
+#
+# Required fields:
+#   key         — unique identifier for this memory (max 256 chars)
+#   value       — the memory content (string, no max but keep practical)
+#   memory_type — one of: "fact", "preference", "profile", "workflow", "reference"
+#   scope       — table with scope_type and optional scope_id
+#
+# Optional fields:
+#   confidence     — float from 0.0 to 1.0 (default: 1.0)
+#   content_format — one of: "text", "json", "html" (default: "text")
+
+# --- Global facts (visible to all assistants) ---
+
+[[memories]]
+key = "user_timezone"
+value = "America/New_York"
+memory_type = "fact"
+confidence = 1.0
+content_format = "text"
+
+[memories.scope]
+scope_type = "global"
+
+[[memories]]
+key = "user_preferred_language"
+value = "en-US"
+memory_type = "preference"
+confidence = 1.0
+
+[memories.scope]
+scope_type = "global"
+
+# --- Assistant-scoped preferences ---
+
+[[memories]]
+key = "writing_style_preference"
+value = "Prefers show-don't-tell narrative techniques over explicit exposition"
+memory_type = "preference"
+confidence = 0.9
+
+[memories.scope]
+scope_type = "assistant"
+scope_id = "aria-writing-assistant"
+
+[[memories]]
+key = "favorite_genres"
+value = "science fiction, literary fiction, magical realism"
+memory_type = "preference"
+confidence = 0.85
+
+[memories.scope]
+scope_type = "assistant"
+scope_id = "aria-writing-assistant"
+
+# --- Structured data (JSON content format) ---
+
+[[memories]]
+key = "project_metadata"
+value = '{"title": "The Long Dark", "genre": "sci-fi", "word_count_target": 80000, "status": "first_draft"}'
+memory_type = "reference"
+confidence = 1.0
+content_format = "json"
+
+[memories.scope]
+scope_type = "assistant"
+scope_id = "aria-writing-assistant"
+
+# --- Workflow patterns ---
+
+[[memories]]
+key = "feedback_workflow"
+value = "When reviewing drafts: 1) Read full text first, 2) Note strengths, 3) Identify patterns, 4) Suggest specific improvements with examples"
+memory_type = "workflow"
+confidence = 1.0
+
+[memories.scope]
+scope_type = "assistant"
+scope_id = "aria-writing-assistant"
+
+# --- Profile information ---
+
+[[memories]]
+key = "writing_experience"
+value = "Intermediate fiction writer with 3 completed short stories and 1 novel-in-progress"
+memory_type = "profile"
+confidence = 0.8
+
+[memories.scope]
+scope_type = "global"
+
+# --- Reference material (larger content is fine) ---
+
+[[memories]]
+key = "style_guide_notes"
+value = """
+Key style preferences:
+- Oxford comma: yes
+- Em dashes: use sparingly
+- Sentence length: varied, mix short punchy with longer flowing
+- POV: third person limited preferred
+- Tense: past tense for narrative, present for internal monologue
+"""
+memory_type = "reference"
+confidence = 1.0
+
+[memories.scope]
+scope_type = "assistant"
+scope_id = "aria-writing-assistant"

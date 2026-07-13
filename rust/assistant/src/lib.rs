@@ -153,6 +153,49 @@ pub use lifesavor_agent::providers::credential_manager::{
 };
 
 // ---------------------------------------------------------------------------
+// Re-exports: Memory types from lifesavor-agent-types (Req 20.4)
+// ---------------------------------------------------------------------------
+
+/// Memory bridge protocol types for interacting with the agent's local
+/// Soul Memory Store from within assistant execution.
+pub use lifesavor_agent_types::memory::{
+    // Core types
+    MemoryRecord,
+    MemoryProposal,
+    MemorySeed,
+    PersonaDefinition,
+    // Enums
+    MemoryType,
+    ContentFormat,
+    ScopeType,
+    MemoryStatus,
+    Verbosity,
+    Formality,
+    // Supporting structs
+    Provenance,
+    SeedScope,
+    PersonaTrait,
+    CommunicationStyle,
+    ScoredMemory,
+    // Bridge request types
+    MemoryCreateRequest,
+    MemoryReadRequest,
+    MemoryUpdateRequest,
+    MemoryDeleteRequest,
+    MemoryProposeRequest,
+    MemorySearchRequest,
+    // Bridge response types
+    MemoryCreateResponse,
+    MemoryReadResponse,
+    MemoryUpdateResponse,
+    MemoryDeleteResponse,
+    MemoryProposeResponse,
+    MemorySearchResponse,
+    // Operation constants
+    operations as memory_operations,
+};
+
+// ---------------------------------------------------------------------------
 // Re-exports: Tracing macros (Req 23.1)
 // ---------------------------------------------------------------------------
 

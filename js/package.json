@@ -7,7 +7,8 @@
   "exports": {
     ".": "./skill-config-sdk.js",
     "./config": "./skill-config-sdk.js",
-    "./canvas": "./canvas-sdk.js"
+    "./canvas": "./canvas-sdk.js",
+    "./memory": "./memory-sdk.js"
   },
   "scripts": {
     "test": "vitest run"

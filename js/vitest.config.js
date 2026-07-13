@@ -2,6 +2,6 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    include: ['skill-config-sdk.test.js', 'canvas-sdk.test.js'],
+    include: ['skill-config-sdk.test.js', 'canvas-sdk.test.js', 'memory-sdk.test.js'],
   },
 });

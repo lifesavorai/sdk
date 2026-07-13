@@ -41,6 +41,31 @@ pub use crate::{
     CredentialSource,
 };
 
+// Memory types (Req 20.4)
+pub use crate::{
+    MemoryRecord,
+    MemoryProposal,
+    MemorySeed,
+    PersonaDefinition,
+    MemoryType,
+    ContentFormat,
+    ScopeType,
+    MemoryStatus,
+    MemoryCreateRequest,
+    MemoryReadRequest,
+    MemoryUpdateRequest,
+    MemoryDeleteRequest,
+    MemoryProposeRequest,
+    MemorySearchRequest,
+    MemoryCreateResponse,
+    MemoryReadResponse,
+    MemoryUpdateResponse,
+    MemoryDeleteResponse,
+    MemoryProposeResponse,
+    MemorySearchResponse,
+    ScoredMemory,
+};
+
 // Process sandbox
 pub use crate::ProcessSandbox;
 

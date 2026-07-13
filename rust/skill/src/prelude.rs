@@ -68,6 +68,31 @@ pub use crate::upgrade_builder::{
     AdapterDependencyBuilder,
 };
 
+// Memory types (Req 20.4)
+pub use crate::{
+    MemoryRecord,
+    MemoryProposal,
+    MemorySeed,
+    PersonaDefinition,
+    MemoryType,
+    ContentFormat,
+    ScopeType,
+    MemoryStatus,
+    MemoryCreateRequest,
+    MemoryReadRequest,
+    MemoryUpdateRequest,
+    MemoryDeleteRequest,
+    MemoryProposeRequest,
+    MemorySearchRequest,
+    MemoryCreateResponse,
+    MemoryReadResponse,
+    MemoryUpdateResponse,
+    MemoryDeleteResponse,
+    MemoryProposeResponse,
+    MemorySearchResponse,
+    ScoredMemory,
+};
+
 // Process sandbox (requires agent-runtime feature)
 #[cfg(feature = "agent-runtime")]
 pub use crate::ProcessSandbox;
